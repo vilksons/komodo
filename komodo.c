@@ -42,8 +42,6 @@ static inline int komo_sys(const char *cmd) {
     return system(cmd);
 }
 
-#define MAX_INPUT_TERMINAL 256
-
 #include "color.h"
 #include "utils.h"
 #include "package.h"
@@ -107,16 +105,16 @@ void _komodo_ () {
             add_history(ptr_cmds);
         }
 
-        int closest_distance =
+        int c_distance =
             INT_MAX;
-        char *closest_command =
+        char *c_command =
             NULL;
 
         for (int i = 0; i < num_cmds; i++) {
-            int distance = komodo_cmds_distance(ptr_cmds, __vcommands__[i]);
-            if (distance < closest_distance) {
-                closest_distance = distance;
-                closest_command = __vcommands__[i];
+            int distance = call_kom_undefined_sizeof(ptr_cmds, __vcommands__[i]);
+            if (distance < c_distance) {
+                c_distance = distance;
+                c_command = __vcommands__[i];
             }
         }
 
@@ -224,9 +222,9 @@ Usage: \"title\" | [<args>]");
             }
         
             continue;
-        } else if (strcmp(ptr_cmds, closest_command) != 0 && closest_distance <= 1) {
+        } else if (strcmp(ptr_cmds, c_command) != 0 && c_distance <= 1) {
             komodo_title("Komodo Toolchain | @ undefined");
-            println("Did you mean: '%s'?", closest_command);
+            println("Did you mean: '%s'?", c_command);
             continue;
         } else {
             if (strlen(ptr_cmds) > 0) {
@@ -243,7 +241,7 @@ Usage: \"title\" | [<args>]");
 int main(void) {
     /* main is not using. */
     /// @ load komodo.toml
-    komodo_TOML();
+    kom_toml_data();
     /// @ komodo commands call.
     _komodo_();
     return 0;

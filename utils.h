@@ -11,9 +11,9 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-int komodo_TOML(void);
+int kom_toml_data(void);
 extern char *komodo_os;
-int komodo_cmds_distance(const char *str1, const char *str2);
+int call_kom_undefined_sizeof(const char *str1, const char *str2);
 void printf_color(const char *color, const char *format, ...);
 void println(const char* fmt, ...);
 int call_extract_tar_gz(const char *fname);

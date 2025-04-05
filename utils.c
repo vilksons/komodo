@@ -40,7 +40,7 @@
 const char
     *komodo_os;
 
-int isWindows(void) {
+int kom_is_windows(void) {
     /* Common Windows system paths, including WSL mount paths */
     const char *__win__[] = {
         "/c/windows/System32",        /* Native Windows path (e.g., on Wine or mounted drive) */
@@ -63,8 +63,8 @@ int isWindows(void) {
     return 0;  /* Not Windows */
 }
 
-const char* detect_os(void) {
-    if (isWindows()) {
+const char* kom_detect_os(void) {
+    if (kom_is_windows()) {
         return "windows";  /* Detected Windows or WSL */
     }
 
@@ -79,7 +79,7 @@ const char* detect_os(void) {
     return "unknown";  /* OS not identified */
 }
 
-int komodo_TOML(void)
+int kom_toml_data(void)
 {
     /* Define the filename and file pointer */
     const char *fname =
@@ -100,7 +100,7 @@ int komodo_TOML(void)
         }
 
         /* Detect the OS and write it to the TOML file */
-        const char *os_type = detect_os();
+        const char *os_type = kom_detect_os();
         fprintf(file, "[general]\n");
         fprintf(file, "os=\"%s\"\n", os_type);
 
@@ -141,7 +141,7 @@ int komodo_TOML(void)
     return 0;
 }
 
-int komodo_cmds_distance(
+int call_kom_undefined_sizeof(
                          const char *str1, const char *str2)
 {
     int len1 = strlen(str1);
