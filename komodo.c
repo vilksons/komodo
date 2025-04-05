@@ -38,7 +38,7 @@
 #include <archive.h>
 #include <archive_entry.h>
 
-static inline int komodo_system(const char *cmd) {
+static inline int komo_sys(const char *cmd) {
     return system(cmd);
 }
 
@@ -48,40 +48,9 @@ static inline int komodo_system(const char *cmd) {
 #include "utils.h"
 #include "package.h"
 
-static void execute_command(
-                            const char *ptr_input)
-{
-    if (ptr_input == NULL)
-    {
-        printf_color(RED, "Error: Null input.\n");
-        return;
-    }
-
-    size_t command_size =
-        strlen(ptr_input) + strlen(" 2>/dev/null") + 1
-    ;
-
-    char *ptr_cmds =
-        (char *)malloc(command_size);
-    if (ptr_cmds == NULL)
-    {
-        printf_color(RED, "Error: Memory allocation failed.\n");
-        return;
-    }
-
-    snprintf(ptr_cmds, command_size, "%s 2>/dev/null", ptr_input);
-
-    int ret =
-        komodo_system(ptr_cmds);
-    if (ret == -1)
-    {
-        printf_color(RED, "Error: Failed to execute command.\n");
-    }
-
-    free(ptr_cmds);
-}
-
-int komodo_title(const char *custom_title) {
+int komodo_title(
+    const char *custom_title)
+ {
     const char *title = custom_title ? custom_title : "Komodo Toolchain";
     printf("\033]0;%s\007", title);
     return 0;
@@ -109,14 +78,15 @@ void _komodo_ () {
     printf
         ("\033[4mWelcome to Komodo!\033[0m\n");
 
-    char *commands[] =
+    char *__vcommands__[] =
     /* valid commands. */
         {
             "exit", "clear", "kill", "title", "help",
             "gamemode", "pawncc"
         };
-    int num_commands =
-        sizeof(commands) / sizeof(commands[0]);
+    int num_cmds =
+        sizeof(__vcommands__) /
+            sizeof(__vcommands__[0]);
 
     while (1) {
         ptr_cmds =
@@ -125,7 +95,7 @@ void _komodo_ () {
         char *malloc_dynamic_str =
             (char *)malloc(256 * sizeof(char));
         if (malloc_dynamic_str == NULL) {
-            printf_color(RED, "Memory allocation failed!");
+            printf_color(COL_RED, "Memory allocation failed!");
             break;
         }
 
@@ -142,11 +112,11 @@ void _komodo_ () {
         char *closest_command =
             NULL;
 
-        for (int i = 0; i < num_commands; i++) {
-            int distance = komodo_cmds_distance(ptr_cmds, commands[i]);
+        for (int i = 0; i < num_cmds; i++) {
+            int distance = komodo_cmds_distance(ptr_cmds, __vcommands__[i]);
             if (distance < closest_distance) {
                 closest_distance = distance;
-                closest_command = commands[i];
+                closest_command = __vcommands__[i];
             }
         }
 
@@ -221,7 +191,7 @@ Usage: \"title\" | [<args>]");
             komodo_title("Komodo Toolchain | @ clear");
 
             clear:
-                komodo_system("clear");
+                komo_sys("clear");
         } else if (strcmp(ptr_cmds, "exit") == 0) {
             komodo_title("Komodo Toolchain | @ exit");
 

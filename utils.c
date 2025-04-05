@@ -189,13 +189,13 @@ void printf_color(
     /* collor message of printf */
     
     /* 
-        * printf_color(RED, "red text!");
-        * printf_color(GREEN, "green text!");
-        * printf_color(YELLOW, "yellow text!");
-        * printf_color(BLUE, "blue text!");
+        * printf_color(COL_RED, "red text!");
+        * printf_color(COL_GREEN, "green text!");
+        * printf_color(COL_YELLOW, "yellow text!");
+        * printf_color(COL_BLUE, "blue text!");
         * printf_color(MAGENTA, "magenta text!");
         * printf_color(CYAN, "cyan text!");
-        * printf_color(RESET, "reset text!");
+        * printf_color(COL_DEFAULT, "reset text!");
     */
 
     va_list args;
@@ -203,7 +203,7 @@ void printf_color(
 
     printf("%s", color);
     vprintf(format, args);
-    printf("%s\n", RESET);
+    printf("%s\n", COL_DEFAULT);
 
     va_end(args);
 }
