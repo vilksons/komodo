@@ -291,7 +291,7 @@ int call_extract_tar_gz(const char *fname) {
 }
 
 int call_extract_zip(
-                const char *zip_path, const char *dest_path)
+                const char *zip_path, const char *__dest_path)
 {
     struct archive
         *__arch;
@@ -324,7 +324,7 @@ int call_extract_zip(
 
         /* Construct full path for the destination file */
         char __full_path[4096];
-        snprintf(__full_path, sizeof(__full_path), "%s/%s", dest_path, __cur_file);
+        snprintf(__full_path, sizeof(__full_path), "%s/%s", __dest_path, __cur_file);
         archive_entry_set_pathname(__entry, __full_path);
 
         /* Write __entry header */
@@ -400,7 +400,7 @@ void call_download_file(const char *url,
     /* Open file for writing in binary mode */
     __fp = fopen(fname, "wb");
     if (__fp == NULL) {
-        perror("[ERR]: Error to open file for writing");
+        perror("[err]: failed to open file for writing");
         return;
     }
 
@@ -429,7 +429,7 @@ void call_download_file(const char *url,
 
         if (__res != CURLE_OK) {
             /* Print error message on failure */
-            fprintf(stderr, "[ERR]: Error to download the file: %s\n", curl_easy_strerror(__res));
+            fprintf(stderr, "[err]: failed to download the file: %s\n", curl_easy_strerror(__res));
             fclose(__fp);
             curl_easy_cleanup(__curl);
             curl_global_cleanup();
@@ -461,7 +461,7 @@ void call_download_file(const char *url,
         curl_easy_cleanup(__curl);
     } else {
         /* Handle curl initialization failure */
-        fprintf(stderr, "[ERR]: Error to initialize curl session\n");
+        fprintf(stderr, "[err]: failed to initialize curl session\n");
     }
 
     /* Global cleanup for curl */

@@ -7,8 +7,8 @@
  * See the LICENSE file for details.
  *
  * Compile with GCC or CLANG
- * GCC: gcc -D_GNU_SOURCE -g komodo.c utils.c package.c tomlc99/toml.c -o komodo -lm -lcurl -lncurses -lreadline -lz -lzip -larchive
- * CLANG: clang -D_GNU_SOURCE -g komodo.c utils.c package.c tomlc99/toml.c -o komodo -lm -lcurl -lncurses -lreadline -lz -lzip -larchive
+ * gcc -D_GNU_SOURCE -g -Os -s komodo.c utils.c package.c tomlc99/toml.c -o komodo -lm -lcurl -lncurses -lreadline -lz -lzip -larchive
+ * clang -D_GNU_SOURCE -g -Os -s komodo.c utils.c package.c tomlc99/toml.c -o komodo -lm -lcurl -lncurses -lreadline -lz -lzip -larchive
  *
  */
 
