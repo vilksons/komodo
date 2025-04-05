@@ -55,7 +55,6 @@ int kom_is_windows(void) {
         }
     }
 
-    /* Check for WSL-specific environment variable */
     if (getenv("WSL_INTEROP") != NULL) {
         return 1;  /* Running inside WSL */
     }
@@ -68,7 +67,6 @@ const char* kom_detect_os(void) {
         return "windows";  /* Detected Windows or WSL */
     }
 
-    /* Use uname to detect Linux */
     struct utsname buf;
     if (uname(&buf) == 0) {
         if (strstr(buf.sysname, "Linux") != NULL) {
@@ -87,32 +85,25 @@ int kom_toml_data(void)
     FILE
         *toml_files;
 
-    /* Try opening the file for reading */
     toml_files = fopen(fname, "r");
     if (toml_files != NULL) {
-        /* File exists, just close it */
         fclose(toml_files);
     } else {
-        /* File doesn't exist, create it */
         toml_files = fopen(fname, "w");
         if (toml_files == NULL) {
-            /* Failed to create file */
             return 1;
         }
 
-        /* Detect the OS and write it to the TOML file */
         const char *os_type = kom_detect_os();
         fprintf(toml_files, "[general]\n");
         fprintf(toml_files, "os=\"%s\"\n", os_type);
 
-        /* Close the newly created file */
         fclose(toml_files);
     }
 
     /* Reopen the file for reading */
     FILE *__fp = fopen(fname, "r");
     if (!__fp) {
-        /* Failed to open file for reading */
         printf("Error: Can't __read file %ss\n", fname);
         return 1;
     }
@@ -264,20 +255,14 @@ int call_extract_tar_gz(const char *fname) {
     archive_read_support_format_tar(__arch);
     archive_read_support_filter_gzip(__arch);
 
-    /* Open the archive file */
     __read = archive_read_open_filename(__arch, fname, 10240);
     if (__read != ARCHIVE_OK)
         return 1; /* Return error if archive can't be opened */
 
     /* Loop through each __entry in the archive */
     while (archive_read_next_header(__arch, &__entry) == ARCHIVE_OK) {
-        /* Write header for current file/directory */
         archive_write_header(__ext, __entry);
-
-        /* Copy file data */
         arch_copy_data(__arch, __ext);
-
-        /* Finish writing the __entry */
         archive_write_finish_entry(__ext);
     }
 
