@@ -65,56 +65,66 @@ struct struct_of init_komodo(void) {
 }
 
 void _komodo_ () {
-    struct struct_of komodo = init_komodo();
-    komodo.title(NULL);
+    /* Initialize the Komodo struct */
+    struct struct_of komodo = init_komodo();  /* Call init_komodo() to initialize the Komodo struct */
+    komodo.title(NULL);  /* Set the title of the Komodo instance to NULL */
 
-    char
-        *ptr_cmds;
+    char *ptr_cmds;  /* Declare a pointer for user commands */
 
-    using_history();
+    using_history();  /* Enable command history */
 
-    printf
-        ("\033[4mWelcome to Komodo!\033[0m\n");
+    /* Print the welcome message */
+    printf("\033[4mWelcome to Komodo!\033[0m\n");
 
-    char *__vcommands__[] =
+    /* Array of valid commands */
+    char *__vcommands__[] = 
     /* valid commands. */
         {
             "exit", "clear", "kill", "title", "help",
             "gamemode", "pawncc"
         };
-    int num_cmds =
-        sizeof(__vcommands__) /
+    /* Calculate the number of commands in the array */
+    int num_cmds = 
+        sizeof(__vcommands__) / 
             sizeof(__vcommands__[0]);
 
+    /* Infinite loop to keep the program running */
     while (1) {
-        ptr_cmds =
-            readline("user:~$ ");
-        
-        char *malloc_dynamic_str =
-            (char *)malloc(256 * sizeof(char));
+        /* Read the user input command */
+        ptr_cmds = 
+            readline("user:~$ ");  /* Prompt for user input with a custom message */
+
+        /* Dynamically allocate memory for a string */
+        char *malloc_dynamic_str = 
+            (char *)malloc(256 * sizeof(char));  /* Allocating 256 bytes of memory */
         if (malloc_dynamic_str == NULL) {
-            printf_color(COL_RED, "Memory allocation failed!");
-            break;
+            printf_color(COL_RED, "Memory allocation failed!");  /* Error handling for memory allocation failure */
+            break;  /* Exit the loop if memory allocation fails */
         }
 
+        /* Check if the command pointer is NULL */
         if (ptr_cmds == NULL) {
-            _komodo_();
+            _komodo_();  /* Call _komodo_() if ptr_cmds is NULL */
         }
 
+        /* If the command string has content, add it to history */
         if (strlen(ptr_cmds) > 0) {
-            add_history(ptr_cmds);
+            add_history(ptr_cmds);  /* Adding ptr_cmds to history */
         }
 
-        int c_distance =
-            INT_MAX;
-        char *c_command =
-            NULL;
+        /* Initialize variables for the command distance and command string */
+        int c_distance = 
+            INT_MAX;  /* Initialize the distance to the maximum integer value */
+        char *c_command = 
+            NULL;  /* Initialize the command pointer to NULL */
 
+        /* Iterate through available commands to find the closest match */
         for (int i = 0; i < num_cmds; i++) {
+            /* Calculate the distance between the input command and the current command */
             int distance = call_kom_undefined_sizeof(ptr_cmds, __vcommands__[i]);
             if (distance < c_distance) {
-                c_distance = distance;
-                c_command = __vcommands__[i];
+                c_distance = distance;  /* Update the closest distance */
+                c_command = __vcommands__[i];  /* Update the closest command */
             }
         }
 

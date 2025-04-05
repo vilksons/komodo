@@ -84,42 +84,43 @@ int kom_toml_data(void)
     /* Define the filename and file pointer */
     const char *fname =
         "komodo.toml";
-    FILE *file;
+    FILE
+        *toml_files;
 
     /* Try opening the file for reading */
-    file = fopen(fname, "r");
-    if (file != NULL) {
+    toml_files = fopen(fname, "r");
+    if (toml_files != NULL) {
         /* File exists, just close it */
-        fclose(file);
+        fclose(toml_files);
     } else {
         /* File doesn't exist, create it */
-        file = fopen(fname, "w");
-        if (file == NULL) {
+        toml_files = fopen(fname, "w");
+        if (toml_files == NULL) {
             /* Failed to create file */
             return 1;
         }
 
         /* Detect the OS and write it to the TOML file */
         const char *os_type = kom_detect_os();
-        fprintf(file, "[general]\n");
-        fprintf(file, "os=\"%s\"\n", os_type);
+        fprintf(toml_files, "[general]\n");
+        fprintf(toml_files, "os=\"%s\"\n", os_type);
 
         /* Close the newly created file */
-        fclose(file);
+        fclose(toml_files);
     }
 
     /* Reopen the file for reading */
-    FILE *fp = fopen(fname, "r");
-    if (!fp) {
+    FILE *__fp = fopen(fname, "r");
+    if (!__fp) {
         /* Failed to open file for reading */
-        printf("Error: Can't read file %ss\n", fname);
+        printf("Error: Can't __read file %ss\n", fname);
         return 1;
     }
 
     /* Parse the TOML file */
     char errbuf[256];
-    toml_table_t *config = toml_parse_file(fp, errbuf, sizeof(errbuf));
-    fclose(fp);
+    toml_table_t *config = toml_parse_file(__fp, errbuf, sizeof(errbuf));
+    fclose(__fp);
 
     /* Check for parse errors */
     if (!config) {
@@ -220,64 +221,71 @@ void println(const char* fmt, ...) {
 int arch_copy_data(
               struct archive *ar, struct archive *aw)
 {
-    int r;
-    const void *buff;
-    size_t size;
-    la_int64_t offset;
+    int __read;
+    const void
+        *__buff;
+    size_t
+        size;
+    la_int64_t
+        offset;
 
     for (;;) {
         /* Read a block of data from the source archive */
-        r = archive_read_data_block(ar, &buff, &size, &offset);
-        if (r == ARCHIVE_EOF)
+        __read = archive_read_data_block(ar, &__buff, &size, &offset);
+        if (__read == ARCHIVE_EOF)
             return ARCHIVE_OK; /* Reached end of archive */
-        if (r != ARCHIVE_OK)
-            return r; /* Return error if read fails */
+        if (__read != ARCHIVE_OK)
+            return __read; /* Return error if __read fails */
 
         /* Write the block to the destination archive */
-        r = archive_write_data_block(aw, buff, size, offset);
-        if (r != ARCHIVE_OK) {
+        __read = archive_write_data_block(aw, __buff, size, offset);
+        if (__read != ARCHIVE_OK) {
             /* Print write error and return code */
             fprintf(stderr, "Write error: %s\n", archive_error_string(aw));
-            return r;
+            return __read;
         }
     }
 }
 
 int call_extract_tar_gz(const char *fname) {
     /* Create archive objects for reading and writing */
-    struct archive *arch =
-        archive_read_new();
-    struct archive *ext =
-        archive_write_disk_new();
-    struct archive_entry *entry;
-    int read;
+    struct archive
+        *__arch =
+            archive_read_new();
+    struct archive
+        *__ext =
+            archive_write_disk_new();
+    struct archive_entry
+        *__entry;
+    int
+        __read;
 
     /* Enable support for tar format and gzip compression */
-    archive_read_support_format_tar(arch);
-    archive_read_support_filter_gzip(arch);
+    archive_read_support_format_tar(__arch);
+    archive_read_support_filter_gzip(__arch);
 
     /* Open the archive file */
-    read = archive_read_open_filename(arch, fname, 10240);
-    if (read != ARCHIVE_OK)
+    __read = archive_read_open_filename(__arch, fname, 10240);
+    if (__read != ARCHIVE_OK)
         return 1; /* Return error if archive can't be opened */
 
-    /* Loop through each entry in the archive */
-    while (archive_read_next_header(arch, &entry) == ARCHIVE_OK) {
+    /* Loop through each __entry in the archive */
+    while (archive_read_next_header(__arch, &__entry) == ARCHIVE_OK) {
         /* Write header for current file/directory */
-        archive_write_header(ext, entry);
+        archive_write_header(__ext, __entry);
 
         /* Copy file data */
-        arch_copy_data(arch, ext);
+        arch_copy_data(__arch, __ext);
 
-        /* Finish writing the entry */
-        archive_write_finish_entry(ext);
+        /* Finish writing the __entry */
+        archive_write_finish_entry(__ext);
     }
 
     /* Clean up */
-    archive_read_close(arch);
-    archive_read_free(arch);
-    archive_write_close(ext);
-    archive_write_free(ext);
+    archive_read_close(__arch);
+    archive_read_free(__arch);
+    archive_write_close(__ext);
+    archive_write_free(__ext);
 
     return 0;
 }
@@ -285,64 +293,68 @@ int call_extract_tar_gz(const char *fname) {
 int call_extract_zip(
                 const char *zip_path, const char *dest_path)
 {
-    struct archive *arch;
-    struct archive *ext;
-    struct archive_entry *entry;
-    int read;
+    struct archive
+        *__arch;
+    struct archive
+        *__ext;
+    struct archive_entry
+        *__entry;
+    int
+        __read;
 
     /* Create and configure archive reader */
-    arch = archive_read_new();
-    archive_read_support_format_zip(arch);      /* Enable ZIP format */
-    archive_read_support_filter_all(arch);      /* Support all filters */
+    __arch = archive_read_new();
+    archive_read_support_format_zip(__arch);      /* Enable ZIP format */
+    archive_read_support_filter_all(__arch);      /* Support all filters */
 
     /* Open the archive file */
-    if ((read = archive_read_open_filename(arch, zip_path, 10240))) {
-        fprintf(stderr, "Can't open: %s\n", archive_error_string(arch));
+    if ((__read = archive_read_open_filename(__arch, zip_path, 10240))) {
+        fprintf(stderr, "Can't open: %s\n", archive_error_string(__arch));
         return 1;
     }
 
     /* Create and configure archive writer */
-    ext = archive_write_disk_new();
-    archive_write_disk_set_options(ext, ARCHIVE_EXTRACT_TIME);
-    archive_write_disk_set_standard_lookup(ext);
+    __ext = archive_write_disk_new();
+    archive_write_disk_set_options(__ext, ARCHIVE_EXTRACT_TIME);
+    archive_write_disk_set_standard_lookup(__ext);
 
-    /* Extract each entry */
-    while (archive_read_next_header(arch, &entry) == ARCHIVE_OK) {
-        const char *currentFile = archive_entry_pathname(entry);
+    /* Extract each __entry */
+    while (archive_read_next_header(__arch, &__entry) == ARCHIVE_OK) {
+        const char *__cur_file = archive_entry_pathname(__entry);
 
         /* Construct full path for the destination file */
-        char fullpath[4096];
-        snprintf(fullpath, sizeof(fullpath), "%s/%s", dest_path, currentFile);
-        archive_entry_set_pathname(entry, fullpath);
+        char __full_path[4096];
+        snprintf(__full_path, sizeof(__full_path), "%s/%s", dest_path, __cur_file);
+        archive_entry_set_pathname(__entry, __full_path);
 
-        /* Write entry header */
-        read = archive_write_header(ext, entry);
-        if (read != ARCHIVE_OK) {
-            fprintf(stderr, "%s\n", archive_error_string(ext));
+        /* Write __entry header */
+        __read = archive_write_header(__ext, __entry);
+        if (__read != ARCHIVE_OK) {
+            fprintf(stderr, "%s\n", archive_error_string(__ext));
         } else {
             /* Read and write file content block by block */
-            const void *buff;
+            const void *__buff;
             size_t size;
             la_int64_t offset;
 
             while (1) {
-                read = archive_read_data_block(arch, &buff, &size, &offset);
-                if (read == ARCHIVE_EOF)
+                __read = archive_read_data_block(__arch, &__buff, &size, &offset);
+                if (__read == ARCHIVE_EOF)
                     break;
-                if (read < ARCHIVE_OK)
-                    fprintf(stderr, "%s\n", archive_error_string(arch));
-                read = archive_write_data_block(ext, buff, size, offset);
-                if (read < ARCHIVE_OK)
-                    fprintf(stderr, "%s\n", archive_error_string(ext));
+                if (__read < ARCHIVE_OK)
+                    fprintf(stderr, "%s\n", archive_error_string(__arch));
+                __read = archive_write_data_block(__ext, __buff, size, offset);
+                if (__read < ARCHIVE_OK)
+                    fprintf(stderr, "%s\n", archive_error_string(__ext));
             }
         }
     }
 
     /* Clean up */
-    archive_read_close(arch);
-    archive_read_free(arch);
-    archive_write_close(ext);
-    archive_write_free(ext);
+    archive_read_close(__arch);
+    archive_read_free(__arch);
+    archive_write_close(__ext);
+    archive_write_free(__ext);
 
     return 0;
 }
@@ -378,45 +390,48 @@ int progress_callback(void *ptr,
 void call_download_file(const char *url,
                    const char *fname
 ) {
-    CURL *curl;
-    CURLcode res;
-    FILE *fp;
+    CURL
+        *__curl;
+    CURLcode
+        __res;
+    FILE
+        *__fp;
 
     /* Open file for writing in binary mode */
-    fp = fopen(fname, "wb");
-    if (fp == NULL) {
+    __fp = fopen(fname, "wb");
+    if (__fp == NULL) {
         perror("[ERR]: Error to open file for writing");
         return;
     }
 
     /* Initialize libcurl globally */
     curl_global_init(CURL_GLOBAL_DEFAULT);
-    curl =
+    __curl =
         curl_easy_init();
 
-    if (curl) {
+    if (__curl) {
         /* Set URL to download */
-        curl_easy_setopt(curl, CURLOPT_URL, url);
+        curl_easy_setopt(__curl, CURLOPT_URL, url);
 
         /* Set write callback and file destination */
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_file);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+        curl_easy_setopt(__curl, CURLOPT_WRITEFUNCTION, write_file);
+        curl_easy_setopt(__curl, CURLOPT_WRITEDATA, __fp);
 
         /* Follow redirects */
-        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+        curl_easy_setopt(__curl, CURLOPT_FOLLOWLOCATION, 1L);
 
         /* Set progress callback */
-        curl_easy_setopt(curl, CURLOPT_XFERINFOFUNCTION, progress_callback);
-        curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
+        curl_easy_setopt(__curl, CURLOPT_XFERINFOFUNCTION, progress_callback);
+        curl_easy_setopt(__curl, CURLOPT_NOPROGRESS, 0L);
 
         /* Perform the file download */
-        res = curl_easy_perform(curl);
+        __res = curl_easy_perform(__curl);
 
-        if (res != CURLE_OK) {
+        if (__res != CURLE_OK) {
             /* Print error message on failure */
-            fprintf(stderr, "[ERR]: Error to download the file: %s\n", curl_easy_strerror(res));
-            fclose(fp);
-            curl_easy_cleanup(curl);
+            fprintf(stderr, "[ERR]: Error to download the file: %s\n", curl_easy_strerror(__res));
+            fclose(__fp);
+            curl_easy_cleanup(__curl);
             curl_global_cleanup();
             return;
         }
@@ -442,8 +457,8 @@ void call_download_file(const char *url,
         }
 
         /* Close the file and clean up curl */
-        fclose(fp);
-        curl_easy_cleanup(curl);
+        fclose(__fp);
+        curl_easy_cleanup(__curl);
     } else {
         /* Handle curl initialization failure */
         fprintf(stderr, "[ERR]: Error to initialize curl session\n");
